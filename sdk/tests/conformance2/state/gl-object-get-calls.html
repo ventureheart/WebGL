@@ -1,7 +1,7 @@
 <!--
 
 /*
-** Copyright (c) 2012 The Khronos Group Inc.
+** Copyright (c) 2015 The Khronos Group Inc.
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a
 ** copy of this software and/or associated documentation files (the
@@ -189,14 +189,14 @@ testInvalidArgument(
       return gl.getFramebufferAttachmentParameter(target, gl.COLOR_ATTACHMENT, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
     }
 );
+var validArray = new Array(gl.COLOR_ATTACHMENT0, gl.DEPTH_ATTACHMENT, gl.STENCIL_ATTACHMENT, gl.DEPTH_STENCIL_ATTACHMENT);
+for (var ii = 1; ii < gl.getParameter(gl.MAX_COLOR_ATTACHMENTS); ++ii) {
+  validArray[validArray.length] = gl.COLOR_ATTACHMENT0 + ii;
+}
 testInvalidArgument(
     "getFramebufferAttachmentParameter",
     "attachment",
-    [ gl.COLOR_ATTACHMENT0,
-      gl.DEPTH_ATTACHMENT,
-      gl.STENCIL_ATTACHMENT,
-      gl.DEPTH_STENCIL_ATTACHMENT
-    ],
+    validArray,
     function(attachment) {
       return gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, attachment, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
     }
@@ -230,12 +230,10 @@ debug("");
 debug("Test getRenderbufferParameter");
 shouldBe('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_WIDTH)', '2');
 shouldBe('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_HEIGHT)', '2');
-shouldBe('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_SAMPLES)', '2');
 // Note: we can't test the actual value of the internal format since
 // the implementation is allowed to change it.
 shouldBeNonZero('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_INTERNAL_FORMAT)');
 shouldBeNonZero('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_DEPTH_SIZE)');
-shouldBeNonZero('gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_SAMPLES)');
 var colorbuffer = gl.createRenderbuffer();
 wtu.glErrorShouldBe(gl, gl.NO_ERROR);
 gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
@@ -257,6 +255,7 @@ testInvalidArgument(
       gl.RENDERBUFFER_ALPHA_SIZE,
       gl.RENDERBUFFER_DEPTH_SIZE,
       gl.RENDERBUFFER_STENCIL_SIZE,
+      gl.RENDERBUFFER_SAMPLES,
     ],
     function(parameter) {
       return gl.getRenderbufferParameter(gl.RENDERBUFFER, parameter);
